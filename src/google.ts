@@ -6,12 +6,12 @@ import {
   getSystemMessage,
   validateConversation,
 } from "./message";
-import { Model } from "./model";
+import { Provider } from "./model";
 import { validateConversationForChat } from "./chat";
 import { GoogleGenAI } from "@google/genai";
 import { ok, err, Result } from "./result";
 
-export class GoogleModel implements Model {
+export class GoogleProvider implements Provider {
   private client: GoogleGenAI;
   private modelName = "gemini-2.5-pro";
   constructor(apiKey: string) {

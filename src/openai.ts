@@ -6,12 +6,12 @@ import {
   getSystemMessage,
   validateConversation,
 } from "./message";
-import { Model } from "./model";
+import { Provider } from "./model";
 import { validateConversationForChat } from "./chat";
 import { OpenAI } from "openai";
 import { ok, err, Result } from "./result";
 
-export class OpenAIModel implements Model {
+export class OpenAIProvider implements Provider {
   private client: OpenAI;
   private modelName = "gpt-5-mini";
   constructor(apiKey: string) {

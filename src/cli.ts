@@ -4,10 +4,11 @@ import { Command } from "commander";
 import * as readline from "readline";
 import boxen from "boxen";
 import chalk from "chalk";
-import { GoogleModel } from "./google";
-import { OpenAIModel } from "./openai";
+import { GoogleProvider } from "./google";
+import { OpenAIProvider } from "./openai";
 import { Chat } from "./chat";
 import { isText, isThought } from "./message";
+import { Provider } from "./model";
 
 const program = new Command();
 
@@ -15,20 +16,11 @@ program
   .name("llm-router")
   .description("Interactive multi-provider LLM chat")
   .version("0.1.0")
-  .option("--list-models", "List available models")
-  .option("--model <model>", "Select model to use")
+  .option("--list-providers", "List available providers")
+  .option("--provider <provider>", "Select provider to use")
   .parse();
 
 const options = program.opts();
-
-// Handle --list-models
-if (options.listModels) {
-  console.log("Available models:");
-  console.log("  - gpt-5 [openai]");
-  console.log("  - gemini-2.5-flash [google]");
-  // TODO: Add your actual model list here
-  process.exit(0);
-}
 
 const googleApiKey = process.env.GOOGLE_API_KEY;
 if (!googleApiKey) {
@@ -41,22 +33,36 @@ if (!openAiApiKey) {
   process.exit(1);
 }
 
-function getModel(model: string) {
-  if (model === "openai") {
-    return new OpenAIModel(openAiApiKey!);
-  }
-  return new GoogleModel(googleApiKey!);
+const providers = [
+  new OpenAIProvider(openAiApiKey!),
+  new GoogleProvider(googleApiKey!),
+];
+
+// Handle --list-providers
+if (options.listProviders) {
+  listProviders(providers);
+  process.exit(0);
 }
 
-const selectedModel =
+function getProvider(provider: string) {
+  if (provider === "openai") {
+    return new OpenAIProvider(openAiApiKey!);
+  }
+  return new GoogleProvider(googleApiKey!);
+}
+
+let mode: "chat" | "stream" = "stream";
+
+const selectedProvider =
   (options.model ?? "openai") === "openai"
-    ? getModel("openai")
-    : getModel("google");
+    ? getProvider("openai")
+    : getProvider("google");
 
 const header = boxen(
   `${chalk.bold("🤖 LLM Router")}\n${chalk.dim("Interactive multi-provider LLM chat")}\n\n` +
-    `${chalk.gray("Model:")} ${chalk.cyan(selectedModel.displayName())}\n` +
-    `${chalk.gray("Tips:")} ${chalk.yellow("/model <openai|google>")} ${chalk.gray("to switch,")} ${chalk.yellow("/help")} ${chalk.gray("for commands")}`,
+    `${chalk.gray("Provider:")} ${chalk.cyan(selectedProvider.displayName())}\n` +
+    `${chalk.gray("Mode:")} ${chalk.cyan(mode)}\n` +
+    `${chalk.gray("Tips:")} ${chalk.yellow("/provider <openai|google>")} ${chalk.gray("to switch,")} ${chalk.yellow("/help")} ${chalk.gray("for commands")}`,
   {
     padding: 1,
     margin: 1,
@@ -69,9 +75,7 @@ console.log(
   chalk.gray("Type your message and press Enter. Press Ctrl+C to exit."),
 );
 
-const chat = new Chat(selectedModel);
-
-let mode: "chat" | "stream" = "stream";
+const chat = new Chat(selectedProvider);
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -93,11 +97,14 @@ rl.on("line", async (input: string) => {
     const command = message.split(" ")[0];
     const args = message.split(" ").slice(1);
     switch (command) {
-      case "/model":
-        chat.changeModel(getModel(args[0]));
+      case "/provider":
+        chat.changeProvider(getProvider(args[0]));
         console.log(
-          `\n${chalk.gray("Switched model to")} ${chalk.cyan(chat.model.displayName())}`,
+          `\n${chalk.gray("Switched provider to")} ${chalk.cyan(chat.provider.displayName())}`,
         );
+        return;
+      case "/list-providers":
+        listProviders(providers);
         return;
       case "/system":
         chat.changeSystemPrompt(args.join(" "));
@@ -116,7 +123,7 @@ rl.on("line", async (input: string) => {
           boxen(
             [
               `${chalk.bold("Commands")}`,
-              `${chalk.yellow("/model <openai|google>")}  ${chalk.gray("Switch active model")}`,
+              `${chalk.yellow("/provider <openai|google>")}  ${chalk.gray("Switch active provider")}`,
               `${chalk.yellow("/system <text>")}         ${chalk.gray("Set system prompt")}`,
               `${chalk.yellow("/exit")}                  ${chalk.gray("Exit")}`,
               `${chalk.yellow("/help")}                  ${chalk.gray("Show help")}`,
@@ -161,7 +168,7 @@ async function communicate(
     return response;
   } else {
     console.log(
-      `\n${chalk.gray("Model:")} ${chalk.cyan(chat.model.displayName())}`,
+      `\n${chalk.gray("Provider:")} ${chalk.cyan(chat.provider.displayName())}`,
     );
     for await (const chunk of chat.stream(message)) {
       if (isThought(chunk)) {
@@ -172,4 +179,12 @@ async function communicate(
     }
     process.stdout.write("\n");
   }
+}
+
+function listProviders(providers: Provider[]) {
+  console.log(
+    `\n${chalk.gray("Available providers:")} ${chalk.cyan(
+      providers.map((provider) => provider.displayName()).join(", "),
+    )}`,
+  );
 }

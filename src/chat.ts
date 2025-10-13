@@ -10,13 +10,13 @@ import {
   userMessage,
 } from "./message";
 import assert from "assert";
-import { Model } from "./model";
+import { Provider } from "./model";
 import { Result } from "./result";
 
 export class Chat {
   private ongoingAssistantMessageContent: string = "";
   constructor(
-    public model: Model,
+    public provider: Provider,
     public conversation: Conversation = [],
     public systemPrompt: string = "",
   ) {
@@ -30,8 +30,8 @@ export class Chat {
     );
   }
 
-  changeModel(model: Model) {
-    this.model = model;
+  changeProvider(provider: Provider) {
+    this.provider = provider;
   }
 
   changeSystemPrompt(systemPrompt: string) {
@@ -48,7 +48,7 @@ export class Chat {
    */
   async message(content: string): Promise<Result<AssistantMessage>> {
     this.conversation.push(userMessage(content));
-    const response = await this.model.chat(this.conversation);
+    const response = await this.provider.chat(this.conversation);
     if (response.ok) {
       this.conversation.push(response.value);
     }
@@ -60,7 +60,7 @@ export class Chat {
    */
   async *stream(content: string) {
     this.conversation.push(userMessage(content));
-    const response = this.model.stream(this.conversation);
+    const response = this.provider.stream(this.conversation);
     for await (const chunk of response) {
       this.addAssitantChunk(chunk);
       yield chunk;

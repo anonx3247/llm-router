@@ -13,30 +13,30 @@ npm install
 ### Interactive Chat Mode (default)
 
 ```bash
-# Start interactive chat with default model
+# Start interactive chat with default provider
 npm run dev
 
 # Or use built version
 npm start
 ```
 
-### List Available Models
+### List Available providers
 
 ```bash
-npm run dev -- --list-models
+npm run dev -- --list-providers
 ```
 
-### Select a Specific Model
+### Select a Specific provider
 
 ```bash
-npm run dev -- --model gpt-4
-npm run dev -- --model claude-3-sonnet
+npm run dev -- --provider openai
+npm run dev -- --provider google
 ```
 
 ## CLI Options
 
-- `--list-models`: List all available models
-- `--model <model>`: Select model to use (default: gpt-4)
+- `--list-providers`: List all available providers
+- `--provider <provider>`: Select provider to use (default: openai)
 
 ## How It Works
 
@@ -72,7 +72,7 @@ llm-router/
 The CLI provides a clean turn-by-turn interface. You need to implement:
 
 1. The actual LLM API calls in the `rl.on('line')` handler (line 42-58 in `src/cli.ts`)
-2. Your model list in the `--list-models` option (line 19-26)
+2. Your provider list in the `--list-providers` option (line 19-26)
 3. Streaming response handling
 
 Look for `// TODO:` comments in the code for implementation points.
