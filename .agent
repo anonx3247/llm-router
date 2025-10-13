@@ -1,0 +1,43 @@
+# Agent Progress Log
+
+## Session: October 13, 2025
+
+### Completed Tasks
+- ✅ Created TypeScript CLI project structure
+- ✅ Set up package.json with dependencies (commander, typescript, tsx, readline)
+- ✅ Configured tsconfig.json for ES2022 modules
+- ✅ Created interactive turn-by-turn chat CLI
+- ✅ Implemented --list-models and --model options
+- ✅ Added .gitignore for TypeScript projects
+- ✅ Updated README with usage instructions
+- ✅ Successfully built and tested CLI
+
+### Project Structure
+```
+llm-router/
+├── src/
+│   └── cli.ts         # Interactive chat CLI with readline
+├── dist/              # Compiled output
+├── package.json
+├── tsconfig.json
+├── .gitignore
+└── README.md
+```
+
+### CLI Interface
+- Simple turn-by-turn chat interface using readline
+- `--list-models` flag to show available models
+- `--model <model>` flag to select model (default: gpt-4)
+- No AI code included - just the TUI shell
+- Ready for user to implement API calls
+
+### Usage
+- `npm run dev` - Start interactive chat
+- `npm run dev -- --list-models` - List models
+- `npm run dev -- --model claude-3-sonnet` - Select model
+
+### Implementation Points (TODO markers in code)
+- Line 50-55 in cli.ts: Add LLM API call logic
+- Line 20-25 in cli.ts: Update model list
+- Implement streaming response handling
+
