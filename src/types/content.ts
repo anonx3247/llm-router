@@ -1,11 +1,9 @@
 export type Provider = "openai" | "google" | "anthropic" | "mistral" | "deepseek" | "moonshotai";
 
-export type ProviderData = Partial<Record<Provider, any>>;
-
 export interface TextContent {
   type: "text";
   text: string;
-  provider: ProviderData | null;
+  provider?: Record<string, any>;
 }
 
 export interface ImageContent {
@@ -16,13 +14,13 @@ export interface ImageContent {
     data?: string;
     mediaType?: string;
   };
-  provider: ProviderData | null;
+  provider?: Record<string, any>;
 }
 
 export interface ThinkingContent {
   type: "thinking";
   thinking: string;
-  provider: ProviderData | null;
+  provider?: Record<string, any>;
 }
 
 export interface ToolUse {
@@ -30,7 +28,7 @@ export interface ToolUse {
   id: string;
   name: string;
   input: any;
-  provider: ProviderData | null;
+  provider?: Record<string, any>;
 }
 
 export interface ToolResult {
@@ -71,21 +69,21 @@ export function isToolResult(content: Content): content is ToolResult {
 }
 
 export function textContent(text: string): TextContent {
-  return { type: "text", text, provider: null };
+  return { type: "text", text };
 }
 
 export function thinkingContent(thinking: string): ThinkingContent {
-  return { type: "thinking", thinking, provider: null };
+  return { type: "thinking", thinking };
 }
 
 export function imageContent(
   source: ImageContent["source"],
 ): ImageContent {
-  return { type: "image", source, provider: null };
+  return { type: "image", source };
 }
 
 export function toolUse(id: string, name: string, input: any): ToolUse {
-  return { type: "tool_use", id, name, input, provider: null };
+  return { type: "tool_use", id, name, input };
 }
 
 export function toolResult(

@@ -1,14 +1,14 @@
 import { Content, textContent } from "./content";
 
 export interface Message {
-  role: "user" | "assistant" | "system";
+  role: "user" | "agent" | "system";
   content: Content[];
 }
 
 export type Conversation = Message[];
 
 export function textMessage(
-  role: "user" | "assistant" | "system",
+  role: "user" | "agent" | "system",
   text: string,
 ): Message {
   return {
@@ -21,8 +21,8 @@ export function userMessage(text: string): Message {
   return textMessage("user", text);
 }
 
-export function assistantMessage(text: string): Message {
-  return textMessage("assistant", text);
+export function agentMessage(text: string): Message {
+  return textMessage("agent", text);
 }
 
 export function systemMessage(text: string): Message {
@@ -47,8 +47,8 @@ export function isUserMessage(message: Message): boolean {
   return message.role === "user";
 }
 
-export function isAssistantMessage(message: Message): boolean {
-  return message.role === "assistant";
+export function isAgentMessage(message: Message): boolean {
+  return message.role === "agent";
 }
 
 export function isSystemMessage(message: Message): boolean {
@@ -65,7 +65,7 @@ export function validateConversation(conversation: Conversation): void {
   if (conversation.length === 0) {
     throw new Error("Conversation cannot be empty");
   }
-  if (isAssistantMessage(conversation[0])) {
-    throw new Error("Assistant message cannot be the first message");
+  if (isAgentMessage(conversation[0])) {
+    throw new Error("Agent message cannot be the first message");
   }
 }

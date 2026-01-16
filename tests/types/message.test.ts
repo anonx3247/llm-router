@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
 import {
   userMessage,
-  assistantMessage,
+  agentMessage,
   systemMessage,
   textMessage,
   getMessageText,
   addContent,
   isUserMessage,
-  isAssistantMessage,
+  isAgentMessage,
   isSystemMessage,
   getSystemMessage,
   validateConversation,
@@ -25,9 +25,9 @@ describe("Message helpers", () => {
       expect((msg.content[0] as any).text).toBe("Hello");
     });
 
-    it("should create an assistant message with text content", () => {
-      const msg = assistantMessage("Hi there");
-      expect(msg.role).toBe("assistant");
+    it("should create an agent message with text content", () => {
+      const msg = agentMessage("Hi there");
+      expect(msg.role).toBe("agent");
       expect(msg.content).toHaveLength(1);
       expect(msg.content[0].type).toBe("text");
       expect((msg.content[0] as any).text).toBe("Hi there");
@@ -98,34 +98,34 @@ describe("Message helpers", () => {
     });
 
     it("should preserve message role", () => {
-      const msg = assistantMessage("Hello");
+      const msg = agentMessage("Hello");
       const withTool = addContent(msg, toolUse("1", "search", {}));
 
-      expect(withTool.role).toBe("assistant");
+      expect(withTool.role).toBe("agent");
     });
   });
 
   describe("Message type guards", () => {
     const user = userMessage("user msg");
-    const assistant = assistantMessage("assistant msg");
+    const agent = agentMessage("agent msg");
     const system = systemMessage("system msg");
 
     it("isUserMessage should correctly identify user messages", () => {
       expect(isUserMessage(user)).toBe(true);
-      expect(isUserMessage(assistant)).toBe(false);
+      expect(isUserMessage(agent)).toBe(false);
       expect(isUserMessage(system)).toBe(false);
     });
 
-    it("isAssistantMessage should correctly identify assistant messages", () => {
-      expect(isAssistantMessage(assistant)).toBe(true);
-      expect(isAssistantMessage(user)).toBe(false);
-      expect(isAssistantMessage(system)).toBe(false);
+    it("isAgentMessage should correctly identify agent messages", () => {
+      expect(isAgentMessage(agent)).toBe(true);
+      expect(isAgentMessage(user)).toBe(false);
+      expect(isAgentMessage(system)).toBe(false);
     });
 
     it("isSystemMessage should correctly identify system messages", () => {
       expect(isSystemMessage(system)).toBe(true);
       expect(isSystemMessage(user)).toBe(false);
-      expect(isSystemMessage(assistant)).toBe(false);
+      expect(isSystemMessage(agent)).toBe(false);
     });
   });
 
@@ -134,7 +134,7 @@ describe("Message helpers", () => {
       const conversation = [
         systemMessage("You are helpful"),
         userMessage("Hello"),
-        assistantMessage("Hi"),
+        agentMessage("Hi"),
       ];
 
       const system = getSystemMessage(conversation);
@@ -144,7 +144,7 @@ describe("Message helpers", () => {
     });
 
     it("should return undefined if no system message exists", () => {
-      const conversation = [userMessage("Hello"), assistantMessage("Hi")];
+      const conversation = [userMessage("Hello"), agentMessage("Hi")];
 
       const system = getSystemMessage(conversation);
       expect(system).toBeUndefined();
@@ -165,7 +165,7 @@ describe("Message helpers", () => {
 
   describe("validateConversation", () => {
     it("should not throw for valid conversation", () => {
-      const conversation = [userMessage("Hello"), assistantMessage("Hi")];
+      const conversation = [userMessage("Hello"), agentMessage("Hi")];
 
       expect(() => validateConversation(conversation)).not.toThrow();
     });
@@ -178,14 +178,14 @@ describe("Message helpers", () => {
       );
     });
 
-    it("should throw if assistant message is first", () => {
+    it("should throw if agent message is first", () => {
       const conversation = [
-        assistantMessage("Hi"),
+        agentMessage("Hi"),
         userMessage("Hello"),
       ];
 
       expect(() => validateConversation(conversation)).toThrow(
-        "Assistant message cannot be the first message",
+        "Agent message cannot be the first message",
       );
     });
 

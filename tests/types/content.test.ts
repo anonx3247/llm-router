@@ -19,7 +19,7 @@ describe("Content types", () => {
       const content = textContent("Hello world");
       expect(content.type).toBe("text");
       expect(content.text).toBe("Hello world");
-      expect(content.provider).toBeNull();
+      expect(content.provider).toBeUndefined();
     });
   });
 
@@ -28,7 +28,7 @@ describe("Content types", () => {
       const content = thinkingContent("Let me think...");
       expect(content.type).toBe("thinking");
       expect(content.thinking).toBe("Let me think...");
-      expect(content.provider).toBeNull();
+      expect(content.provider).toBeUndefined();
     });
   });
 
@@ -41,7 +41,7 @@ describe("Content types", () => {
       expect(content.type).toBe("image");
       expect(content.source.type).toBe("url");
       expect(content.source.url).toBe("https://example.com/image.png");
-      expect(content.provider).toBeNull();
+      expect(content.provider).toBeUndefined();
     });
 
     it("should create an image content object with base64", () => {
@@ -54,7 +54,7 @@ describe("Content types", () => {
       expect(content.source.type).toBe("base64");
       expect(content.source.data).toBe("base64data");
       expect(content.source.mediaType).toBe("image/png");
-      expect(content.provider).toBeNull();
+      expect(content.provider).toBeUndefined();
     });
   });
 
@@ -65,7 +65,7 @@ describe("Content types", () => {
       expect(content.id).toBe("tool-1");
       expect(content.name).toBe("search");
       expect(content.input).toEqual({ query: "test" });
-      expect(content.provider).toBeNull();
+      expect(content.provider).toBeUndefined();
     });
   });
 

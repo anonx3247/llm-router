@@ -1,7 +1,7 @@
 export interface Tool {
   name: string;
   description?: string;
-  inputSchema: any;
+  inputSchema: Record<string, any>;
 }
 
 export type ToolChoice = "auto" | "any" | "none";
@@ -14,7 +14,23 @@ export interface TokenUsage {
   thinking: number;
 }
 
-export interface BaseModelConfig {
+export type OpenAIModel = "gpt-4o" | "gpt-4o-mini" | "gpt-5" | "gpt-5-mini" | "gpt-5-nano";
+export type GoogleModel = "gemini-2.5-pro" | "gemini-2.5-flash" | "gemini-2.5-flash-lite";
+export type AnthropicModel = "claude-opus-4-5" | "claude-sonnet-4-5" | "claude-haiku-4-5";
+export type MistralModel = "mistral-large-latest" | "mistral-small-latest" | "codestral-latest";
+export type DeepseekModel = "deepseek-chat" | "deepseek-reasoner";
+export type MoonshotAIModel = "kimi-k2-thinking";
+
+export type Model =
+  | OpenAIModel
+  | GoogleModel
+  | AnthropicModel
+  | MistralModel
+  | DeepseekModel
+  | MoonshotAIModel;
+
+export interface ModelConfig {
+  model: Model;
   apiKey?: string;
   maxTokens?: number;
   temperature?: number;
@@ -24,61 +40,6 @@ export interface BaseModelConfig {
   toolChoice?: ToolChoice;
   extra?: Record<string, any>;
 }
-
-export interface OpenAIConfig extends BaseModelConfig {
-  model?: string;
-  extra?: {
-    reasoningEffort?: "low" | "medium" | "high";
-    [key: string]: any;
-  };
-}
-
-export interface GoogleConfig extends BaseModelConfig {
-  model?: string;
-  extra?: {
-    thinkingBudget?: number;
-    safetySettings?: any[];
-    [key: string]: any;
-  };
-}
-
-export interface AnthropicConfig extends BaseModelConfig {
-  model?: string;
-  extra?: {
-    thinkingBudget?: number;
-    cacheControl?: boolean;
-    [key: string]: any;
-  };
-}
-
-export interface MistralConfig extends BaseModelConfig {
-  model?: string;
-  extra?: {
-    [key: string]: any;
-  };
-}
-
-export interface DeepseekConfig extends BaseModelConfig {
-  model?: string;
-  extra?: {
-    [key: string]: any;
-  };
-}
-
-export interface MoonshotAIConfig extends BaseModelConfig {
-  model?: string;
-  extra?: {
-    [key: string]: any;
-  };
-}
-
-export type ModelConfig =
-  | OpenAIConfig
-  | GoogleConfig
-  | AnthropicConfig
-  | MistralConfig
-  | DeepseekConfig
-  | MoonshotAIConfig;
 
 export function createTokenUsage(
   input: number,
