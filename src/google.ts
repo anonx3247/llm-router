@@ -33,12 +33,11 @@ export class GoogleProvider implements Provider {
         systemInstruction: getSystemMessage(conversation)?.content,
       },
     });
-    if (!response.candidates?.[0]?.content?.parts?.[0]?.text) {
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
       return err(new Error("No response from Google"));
     }
-    return ok(
-      assistantMessage(response.candidates?.[0]?.content?.parts?.[0]?.text!),
-    );
+    return ok(assistantMessage(text));
   }
 
   async *stream(conversation: Conversation): AsyncIterable<Chunk> {
@@ -55,21 +54,21 @@ export class GoogleProvider implements Provider {
       },
     });
     for await (const textPart of response) {
-      if (!textPart.candidates?.[0]?.content?.parts) {
+      const parts = textPart.candidates?.[0]?.content?.parts;
+      if (!parts) {
         continue;
       }
-      for (const part of textPart.candidates?.[0]?.content?.parts) {
+      for (const part of parts) {
         if (!part.text) {
           continue;
-        }
-        if (part.thought) {
+        } else if (part.thought) {
           yield { type: "thought", content: part.text };
-        }
-        if (part.text.includes("[DONE]")) {
+        } else if (part.text.includes("[DONE]")) {
           yield { type: "end", content: "" };
           return;
+        } else {
+          yield { type: "text", content: part.text };
         }
-        yield { type: "text", content: part.text };
       }
     }
   }

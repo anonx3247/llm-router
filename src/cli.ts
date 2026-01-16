@@ -118,6 +118,7 @@ rl.on("line", async (input: string) => {
         return;
       case "/exit":
         process.exit(0);
+        break;
       case "/help":
         console.log(
           boxen(
