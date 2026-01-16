@@ -12,7 +12,13 @@
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
     "watch": "tsc --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
   },
   "keywords": [
     "llm",
@@ -24,8 +30,14 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.0.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^1.0.0"
   },
   "dependencies": {
     "@google/genai": "^1.24.0",

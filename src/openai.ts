@@ -3,7 +3,6 @@ import {
   AssistantMessage,
   Chunk,
   Conversation,
-  getSystemMessage,
   validateConversation,
 } from "./message";
 import { Provider } from "./model";
